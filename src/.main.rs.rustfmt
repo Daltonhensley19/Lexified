@@ -1,0 +1,61 @@
+#[derive(Clone, Copy, Debug)]
+enum Token {
+    LPARM,
+    RPARM,
+    IDENT,
+    SPACE,
+    TAB,
+    NEWLINE,
+    PUNCT,
+}
+
+impl ToString for Token {
+    fn to_string(&self) -> String {
+        match self {
+            &Self::LPARM => "(".to_string(),
+            &Self::RPARM => ")".to_string(),
+            &Self::IDENT => "".to_string(),
+            &Self::SPACE => " ".to_string(),
+            &Self::TAB => "\t".to_string(),
+            &Self::NEWLINE => "\n".to_string(),
+            &Self::PUNCT => ",".to_string(),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+struct Lexer {
+    item: String,
+    token_list: Vec<(Token, String)>,
+}
+
+impl Lexer {
+    fn tokenize(&mut self) {
+        let split_txt = self.item.split(" ");
+        dbg!(&split_txt);
+        for item in split_txt {
+            dbg!(item);
+            match item {
+                ")" => self.token_list.push((Token::RPARM, item.to_string())),
+                "(" => self.token_list.push((Token::LPARM, item.to_string())),
+                " " => self.token_list.push((Token::SPACE, item.to_string())),
+                "\t" => self.token_list.push((Token::TAB, item.to_string())),
+                "\n" => self.token_list.push((Token::NEWLINE, item.to_string())),
+                "," => self.token_list.push((Token::PUNCT, item.to_string())),
+                _ => self.token_list.push((Token::IDENT, item.to_string())),
+            }
+        }
+    }
+}
+
+fn main() {
+    let mut lex = Lexer {
+        item: "Test String,".to_string(),
+        token_list: Default::default(),
+    };
+
+    println!("{:?}", lex);
+    lex.tokenize();
+
+    println!("{:?}", lex.token_list);
+}
